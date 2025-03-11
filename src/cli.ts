@@ -35,7 +35,7 @@ const isColorSupported =
         ((process.stdout || {}).isTTY && env.TERM !== 'dumb') ||
         !!env.CI);
 
-if (args.values.help) {
+if (args.values.help || args.positionals.length === 0) {
     console.log('');
     console.log(
         styleText(['white', 'bold', 'underline'], 'USAGE'),
