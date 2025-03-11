@@ -1,10 +1,10 @@
 import { glob } from 'node:fs/promises';
-import { join } from 'node:path';
+import { relative } from 'node:path';
 import { env } from 'node:process';
 import { parseArgs, styleText } from 'node:util';
 import { getFileLineEndings } from '.';
 import { transformFile } from './transform-file';
-import { asyncIterToArray, getEndingString } from './utils';
+import { asyncIterToArray, existsAsync, getEndingString } from './utils';
 
 const args = parseArgs({
     options: {
@@ -77,65 +77,79 @@ const newEnding = getEndingString(ending);
 
 (async () => {
     const files = await asyncIterToArray(glob(args.positionals));
-    const maxLineLength = Math.max(...files.map((v) => join(process.cwd(), v).length));
+    const maxLineLength = Math.min(
+        Math.max(...files.map((v) => relative(process.cwd(), v).length)),
+        process.stdout.columns - 6
+    );
+
+    function formatFilePath(filePath: string, padding = 0) {
+        let str = relative(process.cwd(), filePath).replaceAll('\\', '/');
+        if (str.length > process.stdout.columns - padding - 1) {
+            str = '...' + str.slice(-process.stdout.columns + padding + 4);
+        }
+        return str;
+    }
 
     function logFile(type: 'skipped' | 'success' | 'error', filePath: string, start: number) {
-        const duration = Math.round(Math.max(performance.now() - start, 0)).toLocaleString(
-            'en-US',
-            {
+        const duration =
+            '(' +
+            Math.round(Math.max(performance.now() - start, 0)).toLocaleString('en-US', {
                 style: 'unit',
                 unit: 'millisecond'
-            }
-        );
-        const formattedFilePath = join(process.cwd(), filePath).replaceAll('\\', '/');
-        const durationStr = `${' '.repeat(maxLineLength - formattedFilePath.length)} (${duration})`;
+            }) +
+            ')';
 
+        let tag = '';
+        const tagLength = isColorSupported ? 9 : 11;
         switch (type) {
             case 'skipped':
-                console.log(
-                    isColorSupported
-                        ? styleText(['black', 'bgYellow'], ' SKIPPED ')
-                        : '[ SKIPPED ]',
-                    formattedFilePath,
-                    durationStr
-                );
+                tag = isColorSupported
+                    ? styleText(['black', 'bgYellow'], ' SKIPPED ')
+                    : '[ SKIPPED ]';
                 break;
             case 'success':
-                console.log(
-                    isColorSupported
-                        ? styleText(['black', 'bgGreenBright'], ' SUCCESS ')
-                        : '[ SUCCESS ]',
-                    formattedFilePath,
-                    durationStr
-                );
+                tag = isColorSupported
+                    ? styleText(['black', 'bgGreenBright'], ' SUCCESS ')
+                    : '[ SUCCESS ]';
                 break;
             case 'error':
-                console.error(
-                    isColorSupported ? styleText('bgRedBright', '  ERROR  ') : '[  ERROR  ]',
-                    formattedFilePath,
-                    durationStr
-                );
+                tag = isColorSupported ? styleText('bgRedBright', '  ERROR  ') : '[  ERROR  ]';
                 break;
             default:
                 break;
         }
+
+        const formattedFilePath = formatFilePath(filePath, tagLength + duration.length + 1);
+        console.log(
+            tag,
+            formattedFilePath.padEnd(
+                Math.min(maxLineLength, process.stdout.columns - tagLength - duration.length - 2),
+                ' '
+            ),
+            styleText('gray', duration)
+        );
     }
 
     // Empty line
     console.log('');
 
+    let finishedTransforms = 0;
+    let fileCount = 0;
     const transforms$ = files.map(async (filePath) => {
         const start = performance.now();
         const exists = await existsAsync(filePath);
         if (exists != 'file') return;
+        fileCount++;
+
         const currentEnding = await getFileLineEndings(filePath);
         if (!setNew) {
             // Read only
-            const formattedFilePath = join(process.cwd(), filePath).replaceAll('\\', '/');
-            const endingStr = `${' '.repeat(maxLineLength - formattedFilePath.length)} ${currentEnding ?? 'None'}`;
+            const formattedFilePath = formatFilePath(filePath, 6);
+            const endingStr = `${' '.repeat(Math.max(0, maxLineLength - formattedFilePath.length))} ${currentEnding ?? 'None'}`;
             const color =
                 currentEnding == null ? 'grey' : currentEnding === 'CRLF' ? 'blue' : 'green';
             console.log(formattedFilePath, styleText(color, endingStr));
+            finishedTransforms++;
             return;
         }
 
@@ -149,6 +163,7 @@ const newEnding = getEndingString(ending);
             await transformFile(filePath, (chunk) => {
                 return chunk?.toString().replaceAll(curEndingString, newEnding);
             });
+            finishedTransforms++;
             logFile('success', filePath, start);
         } catch (error) {
             logFile('error', filePath, start);
@@ -156,11 +171,17 @@ const newEnding = getEndingString(ending);
         }
     });
 
-    await Promise.allSettled(transforms$);
-
-    const duration = Math.round(performance.now()).toLocaleString('en-US', {
-        style: 'unit',
-        unit: 'millisecond'
+    await Promise.all(transforms$).finally(() => {
+        const duration = Math.round(performance.now()).toLocaleString('en-US', {
+            style: 'unit',
+            unit: 'millisecond'
+        });
+        console.log(
+            '\n' +
+                styleText(
+                    'green',
+                    `${finishedTransforms}/${fileCount} files transformed in ${duration}`
+                )
+        );
     });
-    console.log('\n' + styleText('green', 'Done in ' + duration));
 })();
