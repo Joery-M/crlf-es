@@ -153,7 +153,8 @@ const newEnding = getEndingString(ending);
         if (!setNew) {
             // Read only
             const formattedFilePath = formatFilePath(filePath, 6);
-            const endingStr = `${' '.repeat(Math.max(0, maxLineLength - formattedFilePath.length))} ${currentEnding ?? 'None'}`;
+            const ending = currentEnding ?? 'None';
+            const endingStr = `${' '.repeat(Math.max(0, maxLineLength - formattedFilePath.length + (4 - ending.length)))} ${ending}`;
             const color =
                 currentEnding == null ? 'grey' : currentEnding === 'CRLF' ? 'blue' : 'green';
             console.log(formattedFilePath, styleText(color, endingStr));
@@ -192,7 +193,7 @@ const newEnding = getEndingString(ending);
             '\n' +
                 styleText(
                     'green',
-                    `${finishedTransforms}/${fileCount} files transformed in ${duration}`
+                    `${finishedTransforms}/${fileCount} files ${setNew ? 'transformed' : 'read'} in ${duration}`
                 )
         );
     });
