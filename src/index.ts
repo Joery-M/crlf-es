@@ -66,6 +66,8 @@ export async function setLineEndings(
     const newEnding = getEndingString(ending);
 
     const transforms$ = files.map(async (filePath) => {
+        const exists = await existsAsync(filePath);
+        if (exists != 'file') return;
         const currentEnding = await getFileLineEndings(filePath);
         if ((currentEnding === ending && !force) || currentEnding == null) return;
         const curEndingString = getEndingString(currentEnding);

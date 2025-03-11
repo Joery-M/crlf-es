@@ -1,6 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { constants } from 'node:fs';
-import { access } from 'node:fs/promises';
+import { lstat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -15,9 +14,9 @@ export async function getTempFile(depth = 0): Promise<string> {
 }
 
 // source: https://barker.codes/blog/asynchronously-check-if-a-file-exists-in-node-js/
-export function existsAsync(file: string): Promise<boolean> {
-    return access(file, constants.F_OK)
-        .then(() => true)
+export function existsAsync(file: string): Promise<'file' | 'other' | false> {
+    return lstat(file)
+        .then((v) => (v.isFile() ? 'file' : 'other'))
         .catch(() => false);
 }
 
