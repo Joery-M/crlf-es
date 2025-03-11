@@ -18,7 +18,11 @@ const args = parseArgs({
             short: 's'
         },
         'no-color': { type: 'boolean' },
-        color: { type: 'boolean' }
+        color: { type: 'boolean' },
+        help: {
+            type: 'boolean',
+            short: 'h'
+        }
     },
     allowPositionals: true
 });
@@ -30,6 +34,34 @@ const isColorSupported =
         process.platform === 'win32' ||
         ((process.stdout || {}).isTTY && env.TERM !== 'dumb') ||
         !!env.CI);
+
+if (args.values.help) {
+    console.log('');
+    console.log(
+        styleText(['white', 'bold', 'underline'], 'USAGE'),
+        styleText('cyan', 'crlf-es ./files/**/*.txt --set CRLF'),
+        'or',
+        styleText('cyan', 'crlf-es <input> <options>')
+    );
+    console.log('');
+    console.log(styleText(['white', 'bold', 'underline'], 'OPTIONS'));
+    console.log('');
+    console.log('  ', styleText('cyan', '--help -h'), '\t\t', 'This help message.');
+    console.log(
+        '  ',
+        styleText('cyan', '--force -f, <bool>'),
+        '\t',
+        'Force conversion, even if file already has the same line endings.'
+    );
+    console.log(
+        '  ',
+        styleText('cyan', '--set -s, <CRLF|LF>'),
+        '\t',
+        'Line endings to set the files to.'
+    );
+
+    process.exit(0);
+}
 
 const ending = args.values.set?.toUpperCase();
 const setNew = !!ending;
@@ -89,17 +121,19 @@ const newEnding = getEndingString(ending);
         }
     }
 
+    // Empty line
+    console.log('');
+
     const transforms$ = files.map(async (filePath) => {
         const start = performance.now();
         const currentEnding = await getFileLineEndings(filePath);
         if (!setNew) {
             // Read only
             const formattedFilePath = join(process.cwd(), filePath).replaceAll('\\', '/');
-            const endingStr = `${' '.repeat(maxLineLength - formattedFilePath.length)} ${currentEnding}`;
-            console.log(
-                formattedFilePath,
-                styleText(currentEnding === 'CRLF' ? 'blue' : 'green', endingStr)
-            );
+            const endingStr = `${' '.repeat(maxLineLength - formattedFilePath.length)} ${currentEnding ?? 'None'}`;
+            const color =
+                currentEnding == null ? 'grey' : currentEnding === 'CRLF' ? 'blue' : 'green';
+            console.log(formattedFilePath, styleText(color, endingStr));
             return;
         }
 

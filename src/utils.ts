@@ -3,7 +3,6 @@ import { constants } from 'node:fs';
 import { access } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { LineEnding } from '.';
 
 export type Arrayable<T> = T | T[];
 
