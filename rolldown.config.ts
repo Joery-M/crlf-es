@@ -9,10 +9,7 @@ export default defineConfig([
         platform: 'node',
         external,
         treeshake: true,
-        plugins: [IsolatedDecl()],
-        output: {
-            minify: true,
-        }
+        plugins: [IsolatedDecl()]
     },
     {
         input: './src/cli.ts',
@@ -22,7 +19,6 @@ export default defineConfig([
         output: {
             banner: '#!/usr/bin/env node',
             dir: './bin/',
-            minify: true,
             entryFileNames: 'crlf-es.mjs',
             format: 'esm'
         }

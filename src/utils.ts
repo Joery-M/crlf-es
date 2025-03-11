@@ -32,3 +32,9 @@ export function getEndingString(ending: LineEnding): string {
             return ending;
     }
 }
+
+export async function asyncIterToArray<T>(asyncIterator: NodeJS.AsyncIterator<T>): Promise<T[]> {
+    const arr: T[] = [];
+    for await (const i of asyncIterator) arr.push(i);
+    return arr;
+}

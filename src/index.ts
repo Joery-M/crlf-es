@@ -1,7 +1,7 @@
-import { createReadStream } from 'node:fs';
-import type { GlobOptions } from 'tinyglobby';
+import { createReadStream, type GlobOptionsWithoutFileTypes } from 'node:fs';
+import { glob } from 'node:fs/promises';
 import { transformFile } from './transform-file';
-import { existsAsync, getEndingString, type Arrayable } from './utils';
+import { asyncIterToArray, existsAsync, getEndingString, type Arrayable } from './utils';
 
 export type LineEnding = 'CRLF' | 'LF';
 
@@ -57,14 +57,12 @@ export async function getStringLineEndings(source: string): Promise<LineEnding |
 }
 
 export async function setLineEndings(
-    glob: Arrayable<string>,
+    paths: Arrayable<string>,
     ending: LineEnding,
-    options?: GlobOptions,
+    options?: GlobOptionsWithoutFileTypes,
     force = false
 ): Promise<void> {
-    const { glob: globProm } = await import('tinyglobby');
-
-    const files = await globProm(glob, options);
+    const files = await asyncIterToArray(glob(paths, options));
     const newEnding = getEndingString(ending);
 
     const transforms$ = files.map(async (filePath) => {

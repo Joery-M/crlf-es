@@ -1,11 +1,17 @@
 {
-    "include": ["src"],
+    "include": ["./src/"],
     "compilerOptions": {
         "module": "ESNext",
+        "target": "ESNext",
         "lib": ["ES2021"],
         "declaration": true,
         "moduleResolution": "bundler",
         "verbatimModuleSyntax": true,
         "isolatedDeclarations": true
-    }
+    },
+    "references": [
+        {
+            "path": "./tsconfig.test.json"
+        }
+    ]
 }
