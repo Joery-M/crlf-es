@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "premove ./bin/ ./dist/ && rolldown -w -c",
     "build": "premove ./bin/ ./dist/ && rolldown -c",
-    "test": "vitest"
+    "test": "vitest",
+    "prepack": "pnpm build",
+    "release": "pnpm test run && pnpm changelogen --release --push && pnpm publish"
   },
   "keywords": [
     "line endings",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
+    "changelogen": "^0.6.1",
     "premove": "^4.0.0",
     "prettier": "^3.5.3",
     "rolldown": "1.0.0-beta.4",
