@@ -90,9 +90,14 @@ const newEnding = getEndingString(ending);
         return str;
     }
 
-    function logFile(type: 'skipped' | 'success' | 'error', filePath: string, start: number) {
+    function logFile(
+        type: 'skipped' | 'success' | 'error',
+        filePath: string,
+        start: number,
+        reason?: string
+    ) {
         const duration =
-            '(' +
+            ' (' +
             Math.round(Math.max(performance.now() - start, 0)).toLocaleString('en-US', {
                 style: 'unit',
                 unit: 'millisecond'
@@ -128,6 +133,9 @@ const newEnding = getEndingString(ending);
             ),
             styleText('gray', duration)
         );
+        if (reason) {
+            console.log(' '.repeat(tagLength), styleText('gray', '└─ ' + reason));
+        }
     }
 
     // Empty line
@@ -153,8 +161,12 @@ const newEnding = getEndingString(ending);
             return;
         }
 
-        if ((currentEnding === ending && !args.values.force) || currentEnding == null) {
-            logFile('skipped', filePath, start);
+        if (currentEnding == null) {
+            logFile('skipped', filePath, start, 'No line endings found');
+            return;
+        }
+        if (currentEnding === ending && !args.values.force) {
+            logFile('skipped', filePath, start, 'Line endings are the same');
             return;
         }
         const curEndingString = getEndingString(currentEnding);
