@@ -22,7 +22,10 @@
     "dist"
   ],
   "engines": {
-    "node": "v22"
+    "node": ">=22"
+  },
+  "repository": {
+    "url": "https://github.com/Joery-M/crlf-es"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
