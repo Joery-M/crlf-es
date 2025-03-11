@@ -1,15 +1,24 @@
 import { defineConfig } from 'rolldown';
-import { dependencies } from './package.json' with { type: 'json' };
 import IsolatedDecl from 'unplugin-isolated-decl/rolldown';
 
-const external = ['fs', /^node:/, 'path', ...Object.keys(dependencies)];
+const external = [/^node:/];
+const minify = {
+    deadCodeElimination: true,
+    compress: true,
+    mangle: false,
+    removeWhitespace: false
+} as any;
+
 export default defineConfig([
     {
         input: './src/index.ts',
         platform: 'node',
         external,
         treeshake: true,
-        plugins: [IsolatedDecl()]
+        plugins: [IsolatedDecl()],
+        output: {
+            minify
+        }
     },
     {
         input: './src/cli.ts',
@@ -20,7 +29,8 @@ export default defineConfig([
             banner: '#!/usr/bin/env node',
             dir: './bin/',
             entryFileNames: 'crlf-es.mjs',
-            format: 'esm'
+            format: 'esm',
+            minify
         }
     }
 ]);

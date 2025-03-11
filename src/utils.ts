@@ -22,7 +22,7 @@ export function existsAsync(file: string): Promise<boolean> {
         .catch(() => false);
 }
 
-export function getEndingString(ending: LineEnding): string {
+export function getEndingString(ending: string): string {
     switch (ending) {
         case 'CRLF':
             return '\r\n';
