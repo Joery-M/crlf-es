@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v1.1.0
+
+[compare changes](https://github.com/Joery-M/crlf-es/compare/v1.0.1...v1.1.0)
+
+### 🚀 Enhancements
+
+- Show why file was skipped ([31c2c15](https://github.com/Joery-M/crlf-es/commit/31c2c15))
+- Align ending right in get ([3f6236d](https://github.com/Joery-M/crlf-es/commit/3f6236d))
+
+### 🩹 Fixes
+
+- Dont attempt to modify non-files ([19643bb](https://github.com/Joery-M/crlf-es/commit/19643bb))
+- Better error handling ([9587f98](https://github.com/Joery-M/crlf-es/commit/9587f98))
+
+### 🏡 Chore
+
+- Changelog setup ([9ba92b5](https://github.com/Joery-M/crlf-es/commit/9ba92b5))
+- Add changelog ([0250d9b](https://github.com/Joery-M/crlf-es/commit/0250d9b))
+
+### ❤️ Contributors
+
+- Joery ([@Joery-M](https://github.com/Joery-M))
+
 ## v1.0.1
 
 [compare changes](https://github.com/Joery-M/crlf-es/compare/v1.0.0...v1.0.1)
