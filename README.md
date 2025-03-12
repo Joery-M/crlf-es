@@ -1,10 +1,27 @@
-# crlf-es
+<h1 align="center">
+    crlf-es
+</h1>
+
+<p align="center">
+    <img alt="Node Current" src="https://img.shields.io/node/v/crlf-es">
+    <img alt="Dependency count" src="https://badgen.net/bundlephobia/dependency-count/crlf-es" />
+    <img alt="NPM Unpacked Size" src="https://img.shields.io/npm/unpacked-size/crlf-es">
+</p>
 
 0 dependency, promise-based utility to convert files to CRLF or LF or get file endings for files or strings.
 
 Uses all native NodeJS API's: [`util.parseArgs`](https://nodejs.org/api/util.html#utilparseargsconfig) [`util.styleText`](https://nodejs.org/api/util.html#utilstyletextformat-text-options) [`fs.glob`](https://nodejs.org/api/fs.html#fspromisesglobpattern-options)
 
 Based on [kolodny/crlf](https://github.com/kolodny/crlf)
+
+- [CLI Usage](#cli-usage)
+  - [Set line endings](#set-line-endings)
+  - [Get line endings](#get-line-endings)
+- [API Usage](#api-usage)
+  - [Set line endings in file](#set-line-endings-in-file)
+  - [Set line endings in multiple files](#set-line-endings-in-multiple-files)
+  - [Get line endings for file](#get-line-endings-for-file)
+  - [Get line endings for string](#get-line-endings-for-string)
 
 ## CLI Usage
 
@@ -103,5 +120,5 @@ const myString =
     'Aut adipisci sit qui.\r\nEnim quibusdam accusamus cum fugiat.\r\nOfficiis qui veritatis facilis sint tempora impedit';
 
 const result = await getStringLineEndings(myString);
-// result = CRLF
+// result = "CRLF"
 ```
