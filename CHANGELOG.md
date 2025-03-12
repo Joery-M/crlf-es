@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.1.1
+
+[compare changes](https://github.com/Joery-M/crlf-es/compare/v1.1.0...v1.1.1)
+
+### 🩹 Fixes
+
+- Add pkg.exports ([38ec34d](https://github.com/Joery-M/crlf-es/commit/38ec34d))
+
+### ❤️ Contributors
+
+- Joery ([@Joery-M](https://github.com/Joery-M))
+
 ## v1.1.0
 
 [compare changes](https://github.com/Joery-M/crlf-es/compare/v1.0.1...v1.1.0)
