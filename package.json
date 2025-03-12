@@ -6,6 +6,12 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": "bin/crlf-es.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "premove ./bin/ ./dist/ && rolldown -w -c",
     "build": "premove ./bin/ ./dist/ && rolldown -c",
