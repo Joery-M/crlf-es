@@ -8,7 +8,7 @@
     <img alt="NPM Unpacked Size" src="https://img.shields.io/npm/unpacked-size/crlf-es">
 </p>
 
-0 dependency, promise-based utility to convert files to CRLF or LF or get file endings for files or strings.
+0 dependency, promise-based utility to convert files to CRLF or LF or get line endings for files or strings.
 
 Uses all native NodeJS API's: [`util.parseArgs`](https://nodejs.org/api/util.html#utilparseargsconfig) [`util.styleText`](https://nodejs.org/api/util.html#utilstyletextformat-text-options) [`fs.glob`](https://nodejs.org/api/fs.html#fspromisesglobpattern-options)
 
